@@ -140,6 +140,9 @@ body{background:var(--bg);color:var(--text)}
 /* Google Maps: use a browser key restricted to this GitHub Pages referrer. */
 const GOOGLE_MAPS_API_KEY = "PASTE_RESTRICTED_GOOGLE_MAPS_API_KEY_HERE";
 let routeIqGoogleMapLoaded=false;
+const routeIqMarkers=new Map();
+let busLocationChannel=null;
+const BUS_STALE_AFTER_MS=120000;
 function showMapNotice(id,title,message){const el=document.getElementById(id);if(el)el.innerHTML='<div class="map-placeholder"><strong>'+title+'</strong><span>'+message+'</span></div>';}
 function initRouteIqGoogleMaps(){
   routeIqGoogleMapLoaded=true;
@@ -151,13 +154,46 @@ function initRouteIqGoogleMaps(){
     const el=document.getElementById(item.id);if(!el)return;
     const map=new google.maps.Map(el,{center:{lat:20.5937,lng:78.9629},zoom:item.zoom,mapTypeControl:true,streetViewControl:false,fullscreenControl:true});
     el.dataset.mapReady="true";
-    const info=new google.maps.InfoWindow({content:"<strong>ROUTEIQ bus tracking</strong><br>Waiting for a live GPS coordinate from a registered bus device."});
-    const marker=new google.maps.Marker({position:{lat:20.5937,lng:78.9629},map,title:"GPS not connected",opacity:0.0});
-    marker.addListener("click",()=>info.open({map,anchor:marker}));
     el.routeIqMap=map;
-    el.routeIqGpsMarker=marker;
   });
 }
+
+function renderBusLocation(row){
+  if(!window.google?.maps||!row)return;
+  const position={lat:Number(row.latitude),lng:Number(row.longitude)};
+  if(!Number.isFinite(position.lat)||!Number.isFinite(position.lng))return;
+  const age=Date.now()-new Date(row.recorded_at).getTime();
+  const stale=age>BUS_STALE_AFTER_MS;
+  const maps=[document.getElementById("fleetMapOverview"),document.getElementById("fleetMapTracking")].filter(el=>el?.routeIqMap);
+  maps.forEach(el=>{
+    const key=row.bus_id+":"+el.id;
+    let item=routeIqMarkers.get(key);
+    if(!item){
+      const marker=new google.maps.Marker({map:el.routeIqMap,position,title:"Bus "+row.bus_id});
+      const info=new google.maps.InfoWindow();
+      marker.addListener("click",()=>info.open({map:el.routeIqMap,anchor:marker}));
+      item={marker,info};routeIqMarkers.set(key,item);
+    }
+    item.marker.setPosition(position);item.marker.setOpacity(stale?0.55:1);
+    item.marker.setTitle("Bus "+row.bus_id+(stale?" · stale GPS":" · live"));
+    item.info.setContent("<div style='padding:4px'><strong>Bus "+String(row.bus_id).replace(/[&<>"]/g,"")+"</strong><br>"+(stale?"Last update is older than 2 minutes":"GPS update is recent")+"<br>Updated: "+new Date(row.recorded_at).toLocaleString()+(row.speed_kmh==null?"":"<br>Speed: "+Number(row.speed_kmh).toFixed(1)+" km/h")+"</div>");
+  });
+}
+async function loadLatestBusLocations(){
+  if(!supabaseClient||!window.routeIqUser)return;
+  const {data,error}=await supabaseClient.from("bus_locations").select("bus_id,latitude,longitude,speed_kmh,heading_degrees,recorded_at").order("recorded_at",{ascending:false}).limit(200);
+  if(error){toast("Unable to load bus GPS locations. Check Supabase access.");return;}
+  const latest=new Map();
+  (data||[]).forEach(row=>{if(!latest.has(row.bus_id))latest.set(row.bus_id,row);});
+  latest.forEach(renderBusLocation);
+}
+function subscribeToBusLocations(){
+  if(!supabaseClient||!window.routeIqUser||busLocationChannel)return;
+  busLocationChannel=supabaseClient.channel("routeiq-bus-locations")
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"bus_locations"},payload=>renderBusLocation(payload.new))
+    .subscribe();
+}
+
 function loadRouteIqGoogleMaps(){
   if(GOOGLE_MAPS_API_KEY==="PASTE_RESTRICTED_GOOGLE_MAPS_API_KEY_HERE"){
     ["fleetMapOverview","fleetMapTracking"].forEach(id=>showMapNotice(id,"Google Maps setup required","In index.html, replace PASTE_RESTRICTED_GOOGLE_MAPS_API_KEY_HERE with your restricted Google Maps JavaScript API key. Live bus markers also require GPS coordinates."));
@@ -193,7 +229,7 @@ let supabaseClient=null,authMode="signin";
 function setAuthMode(mode){authMode=mode;const signup=mode==="signup";document.getElementById("signInTab").classList.toggle("active",!signup);document.getElementById("signUpTab").classList.toggle("active",signup);document.getElementById("nameWrap").hidden=!signup;document.getElementById("authName").required=signup;document.getElementById("authTitle").textContent=signup?"Create your account":"Welcome back";document.getElementById("authSub").textContent=signup?"Join your campus transport workspace.":"Sign in to your campus transport workspace.";document.getElementById("authSubmit").textContent=signup?"Create account":"Sign in securely";document.getElementById("authPassword").autocomplete=signup?"new-password":"current-password";document.getElementById("authError").textContent="";}
 document.getElementById("signInTab").addEventListener("click",()=>setAuthMode("signin"));document.getElementById("signUpTab").addEventListener("click",()=>setAuthMode("signup"));
 function showAuthError(message){document.getElementById("authError").textContent=message||"";}
-function setSignedIn(user){const backdrop=document.getElementById("authBackdrop");backdrop.style.display="none";backdrop.setAttribute("aria-hidden","true");document.getElementById("userEmail").textContent=user?.email||"Guest · sign in to use";document.getElementById("userAvatar").textContent=(user?.user_metadata?.full_name||user?.email||"G").trim().charAt(0).toUpperCase();document.getElementById("logoutBtn").style.display=user?"inline-block":"none";document.getElementById("assistantFab").style.display="block";if(!user)document.getElementById("assistantPanel").classList.remove("open");window.routeIqUser=user||null;}function requireLogin(){if(window.routeIqUser)return true;const backdrop=document.getElementById("authBackdrop");backdrop.style.display="grid";backdrop.setAttribute("aria-hidden","false");setAuthMode("signin");showAuthError("Please sign in or create an account to use this feature.");document.getElementById("authEmail").focus();return false;}
+function setSignedIn(user){const backdrop=document.getElementById("authBackdrop");backdrop.style.display="none";backdrop.setAttribute("aria-hidden","true");document.getElementById("userEmail").textContent=user?.email||"Guest · sign in to use";document.getElementById("userAvatar").textContent=(user?.user_metadata?.full_name||user?.email||"G").trim().charAt(0).toUpperCase();document.getElementById("logoutBtn").style.display=user?"inline-block":"none";document.getElementById("assistantFab").style.display="block";if(!user)document.getElementById("assistantPanel").classList.remove("open");window.routeIqUser=user||null;if(user){loadLatestBusLocations();subscribeToBusLocations();}else if(busLocationChannel&&supabaseClient){supabaseClient.removeChannel(busLocationChannel);busLocationChannel=null;}}function requireLogin(){if(window.routeIqUser)return true;const backdrop=document.getElementById("authBackdrop");backdrop.style.display="grid";backdrop.setAttribute("aria-hidden","false");setAuthMode("signin");showAuthError("Please sign in or create an account to use this feature.");document.getElementById("authEmail").focus();return false;}
 async function initAuth(){if(!window.supabase){showAuthError("Authentication library failed to load. Refresh the page and try again.");return;}supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce"}});const callbackUrl=new URL(window.location.href);const hasAuthCallback=callbackUrl.searchParams.has("code")||callbackUrl.hash.includes("access_token=")||callbackUrl.hash.includes("error_description=");supabaseClient.auth.onAuthStateChange((event,session)=>{if(session?.user){setSignedIn(session.user);if(hasAuthCallback&&(event==="SIGNED_IN"||event==="TOKEN_REFRESHED")){toast("Email verified — you are now signed in.");window.history.replaceState({},document.title,window.location.pathname);}}else if(event==="SIGNED_OUT"){setSignedIn(null);}});const {data,error}=await supabaseClient.auth.getSession();if(error){showAuthError("Could not complete sign-in: "+error.message);return;}if(data.session?.user){setSignedIn(data.session.user);if(hasAuthCallback){toast("Email verified — you are now signed in.");window.history.replaceState({},document.title,window.location.pathname);}}else{setSignedIn(null);if(hasAuthCallback){const detail=callbackUrl.searchParams.get("error_description")||callbackUrl.hash.match(/error_description=([^&]+)/)?.[1];showAuthError(detail?decodeURIComponent(detail.replace(/\+/g," ")):"Email link could not be completed. It may be expired or already used. Request a fresh verification email and open the newest link in this browser.");}}}
 document.getElementById("authForm").addEventListener("submit",async e=>{e.preventDefault();if(!supabaseClient){showAuthError("Still connecting to secure sign-in. Please retry.");return;}const email=document.getElementById("authEmail").value.trim(),password=document.getElementById("authPassword").value,name=document.getElementById("authName").value.trim();const button=document.getElementById("authSubmit");button.disabled=true;button.textContent=authMode==="signup"?"Creating account…":"Signing in…";showAuthError("");document.getElementById("resendConfirmation").style.display="none";try{if(authMode==="signup"){const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:"https://paradoxloop18.github.io/ROUTE-IQ/",data:{full_name:name}}});if(error)throw error;if(data.session){setSignedIn(data.user);toast("Account created successfully.");}else{showAuthError("If this address is eligible, Supabase will send a confirmation email. Check spam and Promotions too.");document.getElementById("resendConfirmation").style.display="block";}}else{const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;setSignedIn(data.user);toast("Signed in successfully.");}}catch(err){showAuthError(err.message||"Unable to authenticate. Please try again.");}finally{button.disabled=false;button.textContent=authMode==="signup"?"Create account":"Sign in securely";}});
 document.getElementById("resendConfirmation").addEventListener("click",async()=>{if(!supabaseClient)return;const email=document.getElementById("authEmail").value.trim();if(!email){showAuthError("Enter your email address first.");return;}const b=document.getElementById("resendConfirmation");b.disabled=true;b.textContent="Sending…";showAuthError("");try{const {error}=await supabaseClient.auth.resend({type:"signup",email,options:{emailRedirectTo:"https://paradoxloop18.github.io/ROUTE-IQ/"}});if(error)throw error;showAuthError("If a new confirmation can be sent, it should arrive shortly. Check Spam and Promotions.");}catch(err){showAuthError(err.message||"Could not resend confirmation. Check Supabase email settings.");}finally{b.disabled=false;b.textContent="Resend verification email";}});
