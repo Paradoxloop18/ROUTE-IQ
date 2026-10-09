@@ -53,6 +53,7 @@ body{background:var(--bg);color:var(--text)}
 .google-map .map-placeholder span{max-width:440px;color:#68768b;font-size:12px;line-height:1.6}
 .gm-style .gm-style-iw-c{border-radius:12px}
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 </head>
 <body>
 <div class="app">
@@ -81,7 +82,7 @@ body{background:var(--bg);color:var(--text)}
 </div>
 <div class="layout">
 <section class="panel"><div class="panel-head"><div><h3>Live fleet overview</h3><p>Illustrative route map · demo locations</p></div><button class="text-btn" data-go="tracking">View tracking ↗</button></div>
-<div class="map google-map" id="fleetMapOverview" aria-label="Google map showing bus fleet locations"><div class="map-placeholder"><strong>Google Maps setup required</strong><span>Add your restricted Google Maps API key in the GOOGLE_MAPS_API_KEY setting in index.html.</span></div></div><p class="note">Prototype preview only — GPS, arrival times and passenger counts are not connected to a live device or backend.</p>
+<div class="map google-map" id="fleetMapOverview" aria-label="Google map showing bus fleet locations"><div class="map-placeholder"><strong>Google Maps setup required</strong><span>Add your restricted Google Maps API key in the OPENSTREETMAP_TILES setting in index.html.</span></div></div><p class="note">Prototype preview only — GPS, arrival times and passenger counts are not connected to a live device or backend.</p>
 </section>
 <section class="panel"><div class="panel-head"><div><h3>Fleet status</h3><p>Bus occupancy at a glance</p></div><button class="text-btn" data-go="tracking">All buses ↗</button></div><div class="bus-list">
 <div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Bus 01 · TS 09 AB 1234</strong><small>Route A · North Campus</small><div class="occupancy"><span style="width:72%"></span></div><div class="bus-bottom"><span>36 / 50 seats</span><span>72%</span></div></div><span class="status live">ON ROUTE</span></div>
@@ -138,7 +139,7 @@ body{background:var(--bg);color:var(--text)}
 <script>
 
 /* Google Maps: use a browser key restricted to this GitHub Pages referrer. */
-const GOOGLE_MAPS_API_KEY = "PASTE_RESTRICTED_GOOGLE_MAPS_API_KEY_HERE";
+/* OpenStreetMap tiles rendered with Leaflet; no API key is required for the standard OSM tile service. */
 let routeIqGoogleMapLoaded=false;
 const routeIqMarkers=new Map();
 let busLocationChannel=null;
@@ -146,37 +147,36 @@ const BUS_STALE_AFTER_MS=120000;
 function showMapNotice(id,title,message){const el=document.getElementById(id);if(el)el.innerHTML='<div class="map-placeholder"><strong>'+title+'</strong><span>'+message+'</span></div>';}
 function initRouteIqGoogleMaps(){
   routeIqGoogleMapLoaded=true;
-  const config=[
-    {id:"fleetMapOverview",zoom:5},
-    {id:"fleetMapTracking",zoom:5}
-  ];
-  config.forEach(item=>{
-    const el=document.getElementById(item.id);if(!el)return;
-    const map=new google.maps.Map(el,{center:{lat:20.5937,lng:78.9629},zoom:item.zoom,mapTypeControl:true,streetViewControl:false,fullscreenControl:true});
+  [{id:"fleetMapOverview",zoom:5},{id:"fleetMapTracking",zoom:5}].forEach(item=>{
+    const el=document.getElementById(item.id);if(!el||el.dataset.mapReady==="true")return;
+    const map=L.map(el).setView([20.5937,78.9629],item.zoom);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+      maxZoom:19,
+      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>'
+    }).addTo(map);
     el.dataset.mapReady="true";
     el.routeIqMap=map;
+    setTimeout(()=>map.invalidateSize(),100);
   });
+  if(window.routeIqUser)loadLatestBusLocations();
 }
-
 function renderBusLocation(row){
-  if(!window.google?.maps||!row)return;
-  const position={lat:Number(row.latitude),lng:Number(row.longitude)};
-  if(!Number.isFinite(position.lat)||!Number.isFinite(position.lng))return;
+  if(!window.L||!row)return;
+  const lat=Number(row.latitude),lng=Number(row.longitude);
+  if(!Number.isFinite(lat)||!Number.isFinite(lng)||lat < -90||lat > 90||lng < -180||lng > 180)return;
   const age=Date.now()-new Date(row.recorded_at).getTime();
   const stale=age>BUS_STALE_AFTER_MS;
-  const maps=[document.getElementById("fleetMapOverview"),document.getElementById("fleetMapTracking")].filter(el=>el?.routeIqMap);
-  maps.forEach(el=>{
+  [document.getElementById("fleetMapOverview"),document.getElementById("fleetMapTracking")].filter(el=>el?.routeIqMap).forEach(el=>{
     const key=row.bus_id+":"+el.id;
-    let item=routeIqMarkers.get(key);
-    if(!item){
-      const marker=new google.maps.Marker({map:el.routeIqMap,position,title:"Bus "+row.bus_id});
-      const info=new google.maps.InfoWindow();
-      marker.addListener("click",()=>info.open({map:el.routeIqMap,anchor:marker}));
-      item={marker,info};routeIqMarkers.set(key,item);
+    let marker=routeIqMarkers.get(key);
+    if(!marker){
+      marker=L.marker([lat,lng]).addTo(el.routeIqMap);
+      routeIqMarkers.set(key,marker);
     }
-    item.marker.setPosition(position);item.marker.setOpacity(stale?0.55:1);
-    item.marker.setTitle("Bus "+row.bus_id+(stale?" · stale GPS":" · live"));
-    item.info.setContent("<div style='padding:4px'><strong>Bus "+String(row.bus_id).replace(/[&<>"]/g,"")+"</strong><br>"+(stale?"Last update is older than 2 minutes":"GPS update is recent")+"<br>Updated: "+new Date(row.recorded_at).toLocaleString()+(row.speed_kmh==null?"":"<br>Speed: "+Number(row.speed_kmh).toFixed(1)+" km/h")+"</div>");
+    marker.setLatLng([lat,lng]);
+    marker.setOpacity(stale?0.55:1);
+    const safeBus=String(row.bus_id).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    marker.bindPopup("<strong>Bus "+safeBus+"</strong><br>"+(stale?"Last update is older than 2 minutes":"Recent GPS update")+"<br>Updated: "+new Date(row.recorded_at).toLocaleString()+(row.speed_kmh==null?"":"<br>Speed: "+Number(row.speed_kmh).toFixed(1)+" km/h"));
   });
 }
 async function loadLatestBusLocations(){
@@ -193,20 +193,17 @@ function subscribeToBusLocations(){
     .on("postgres_changes",{event:"INSERT",schema:"public",table:"bus_locations"},payload=>renderBusLocation(payload.new))
     .subscribe();
 }
-
 function loadRouteIqGoogleMaps(){
-  if(GOOGLE_MAPS_API_KEY==="PASTE_RESTRICTED_GOOGLE_MAPS_API_KEY_HERE"){
-    ["fleetMapOverview","fleetMapTracking"].forEach(id=>showMapNotice(id,"Google Maps setup required","In index.html, replace PASTE_RESTRICTED_GOOGLE_MAPS_API_KEY_HERE with your restricted Google Maps JavaScript API key. Live bus markers also require GPS coordinates."));
-    return;
-  }
-  if(window.google?.maps){initRouteIqGoogleMaps();return;}
-  window.initRouteIqGoogleMaps=initRouteIqGoogleMaps;
+  if(window.L){initRouteIqGoogleMaps();return;}
   const script=document.createElement("script");
-  script.src="https://maps.googleapis.com/maps/api/js?key="+encodeURIComponent(GOOGLE_MAPS_API_KEY)+"&callback=initRouteIqGoogleMaps&loading=async";
-  script.async=true;script.defer=true;
-  script.onerror=()=>["fleetMapOverview","fleetMapTracking"].forEach(id=>showMapNotice(id,"Google Maps could not load","Check that Maps JavaScript API is enabled, billing is active, and this website is allowed by your API key's HTTP referrer restrictions."));
+  script.src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+  script.integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
+  script.crossOrigin="";
+  script.onload=initRouteIqGoogleMaps;
+  script.onerror=()=>["fleetMapOverview","fleetMapTracking"].forEach(id=>showMapNotice(id,"Map could not load","Check your internet connection and reload. OpenStreetMap does not require an API key."));
   document.head.appendChild(script);
 }
+
 
 const titles={dashboard:"Overview",tracking:"Live Tracking",routes:"Routes & Stops",passengers:"Passenger Insights",fees:"Transport Fees",alerts:"Alerts & Safety",reports:"Reports & Sustainability",settings:"System Overview"};
 function showPage(page){if(!titles[page])return;document.querySelectorAll(".page-view").forEach(v=>v.classList.remove("active"));document.getElementById("page-"+page).classList.add("active");document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));document.getElementById("page-title").textContent=titles[page];window.scrollTo({top:0,behavior:"smooth"});}
