@@ -230,7 +230,7 @@ function loadRouteIqGoogleMaps(){
 
 
 const titles={dashboard:"Overview",tracking:"Live Tracking",routes:"Routes & Stops",passengers:"Passenger Insights",fees:"Transport Fees",alerts:"Alerts & Safety",reports:"Reports & Sustainability",settings:"System Overview"};
-function showPage(page){if(!titles[page])return;document.querySelectorAll(".page-view").forEach(v=>v.classList.remove("active"));document.getElementById("page-"+page).classList.add("active");document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));document.getElementById("page-title").textContent=titles[page];window.scrollTo({top:0,behavior:"smooth"});}
+function showPage(page){if(!titles[page])return;document.querySelectorAll(".page-view").forEach(v=>v.classList.remove("active"));document.getElementById("page-"+page).classList.add("active");document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));document.getElementById("page-title").textContent=titles[page];if(page==="tracking")setTimeout(()=>{const map=document.getElementById("fleetMapTracking")?.routeIqMap;if(map)map.invalidateSize();},120);if(page==="dashboard")setTimeout(()=>{const map=document.getElementById("fleetMapOverview")?.routeIqMap;if(map)map.invalidateSize();},120);window.scrollTo({top:0,behavior:"smooth"});}
 document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
 document.getElementById("menuBtn").addEventListener("click",()=>showPage("dashboard"));
