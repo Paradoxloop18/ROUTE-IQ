@@ -38,6 +38,13 @@ body{background:var(--bg);color:var(--text)}
 .assistant-panel{position:fixed;right:22px;bottom:92px;width:min(370px,calc(100vw - 28px));height:470px;max-height:calc(100vh - 125px);z-index:30;display:none;flex-direction:column;background:#fff;border:1px solid #ead98b;border-radius:20px;box-shadow:0 20px 60px #17263e2b;overflow:hidden}
 .assistant-panel.open{display:flex}.assistant-head{background:#fff4b9;padding:16px;display:flex;align-items:center;justify-content:space-between}.assistant-head strong{display:block}.assistant-head small{color:#6d6b59}.assistant-close{border:0;background:transparent;font-size:20px;color:#17263e}.assistant-messages{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#fffdf7}.chat-msg{max-width:88%;padding:10px 12px;border-radius:14px;font-size:12px;white-space:pre-wrap}.chat-msg.bot{background:#fff0b2;align-self:flex-start;color:#25334a}.chat-msg.user{background:#17263e;color:white;align-self:flex-end}.assistant-prompts{display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px}.assistant-prompts button{border:1px solid #ead98b;background:#fffaf0;color:#5c4a00;border-radius:20px;padding:6px 9px;font-size:10px}.assistant-input{display:flex;gap:7px;padding:10px;border-top:1px solid #f0e6bd}.assistant-input input{min-width:0;flex:1;border:1px solid #e8dca9;border-radius:10px;padding:10px;outline-color:#e9b900}.assistant-input button{border:0;border-radius:10px;background:#ffcc00;padding:0 13px;font-weight:900}
 @media(max-width:720px){.user-email{display:none}.assistant-fab{right:14px;bottom:14px}.assistant-panel{right:14px;bottom:82px}.auth-card{padding:22px}}
+
+/* Accessible show/hide password controls */
+.password-field{position:relative;margin-top:6px}
+.password-field input{display:block;width:100%;margin-top:0;padding-right:76px!important}
+.password-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#6c5a13;font-size:11px;font-weight:800;padding:7px 6px;border-radius:7px;cursor:pointer}
+.password-toggle:hover{background:#fff4bd;color:#17263e}
+.password-toggle:focus-visible{outline:2px solid #c99c00;outline-offset:2px}
 </style>
 </head>
 <body>
@@ -108,7 +115,7 @@ body{background:var(--bg);color:var(--text)}
     <form class="auth-form" id="authForm">
       <label id="nameWrap" hidden>Full name<input id="authName" autocomplete="name" placeholder="Your full name"></label>
       <label>Email address<input id="authEmail" type="email" autocomplete="email" placeholder="you@college.edu" required></label>
-      <label>Password<input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters" required></label>
+      <label for="authPassword">Password<div class="password-field"><input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters" required><button class="password-toggle" type="button" data-password-toggle="authPassword" aria-controls="authPassword" aria-label="Show password" aria-pressed="false">Show</button></div></label>
       <button class="primary-btn" id="authSubmit" type="submit">Sign in securely</button><div class="auth-error" id="authError" role="status"></div>
     </form><div class="auth-foot">Secure authentication powered by Supabase. Use your own account; never share your password.</div>
   </div>
@@ -152,6 +159,7 @@ function assistantReply(question){const q=question.toLowerCase();if(q.includes("
 document.getElementById("assistantForm").addEventListener("submit",e=>{e.preventDefault();const input=document.getElementById("assistantInput"),q=input.value.trim();if(!q)return;addChat(q,"user");input.value="";setTimeout(()=>addChat(assistantReply(q),"bot"),180);});
 document.querySelectorAll("[data-prompt]").forEach(b=>b.addEventListener("click",()=>{document.getElementById("assistantInput").value=b.dataset.prompt;document.getElementById("assistantForm").requestSubmit();}));
 
+document.querySelectorAll("[data-password-toggle]").forEach(toggle=>{toggle.addEventListener("click",()=>{const field=document.getElementById(toggle.dataset.passwordToggle);const reveal=field.type==="password";field.type=reveal?"text":"password";toggle.textContent=reveal?"Hide":"Show";toggle.setAttribute("aria-label",reveal?"Hide password":"Show password");toggle.setAttribute("aria-pressed",String(reveal));});});
 initAuth();
 </script>
 </body></html>
