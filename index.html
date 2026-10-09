@@ -83,7 +83,7 @@ body.auth-open .map{visibility:hidden!important;pointer-events:none!important}
 </div>
 <div class="layout">
 <section class="panel"><div class="panel-head"><div><h3>Live fleet overview</h3><p>Illustrative route map · demo locations</p></div><button class="text-btn" data-go="tracking">View tracking ↗</button></div>
-<div class="map google-map" id="fleetMapOverview" aria-label="Google map showing bus fleet locations"><div class="map-placeholder"><strong>Google Maps setup required</strong><span>Add your restricted Google Maps API key in the OPENSTREETMAP_TILES setting in index.html.</span></div></div><p class="note">Prototype preview only — GPS, arrival times and passenger counts are not connected to a live device or backend.</p>
+<div class="map google-map" id="fleetMapOverview" aria-label="OpenStreetMap showing five illustrative CMR campus bus locations"><div class="map-placeholder"><strong>Loading Telangana map…</strong><span>Map of Hyderabad and CMR campus area. Bus positions are illustrative demo data, not live GPS.</span></div></div><p class="note">Prototype preview only — GPS, arrival times and passenger counts are not connected to a live device or backend.</p>
 </section>
 <section class="panel"><div class="panel-head"><div><h3>Fleet status</h3><p>Bus occupancy at a glance</p></div><button class="text-btn" data-go="tracking">All buses ↗</button></div><div class="bus-list">
 <div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Bus 01 · TS 09 AB 1234</strong><small>Route A · North Campus</small><div class="occupancy"><span style="width:72%"></span></div><div class="bus-bottom"><span>36 / 50 seats</span><span>72%</span></div></div><span class="status live">ON ROUTE</span></div>
@@ -107,7 +107,7 @@ body.auth-open .map{visibility:hidden!important;pointer-events:none!important}
 <div class="bottom-grid"><section class="panel"><div class="panel-head"><div><h3>Passenger distribution</h3><p>Illustrative share of current passengers</p></div></div><div class="progress-row"><span>Route A</span><div class="progress-track"><span style="width:78%"></span></div><b>78</b></div><div class="progress-row"><span>Route B</span><div class="progress-track"><span style="width:64%;background:#6fa8ff"></span></div><b>64</b></div><div class="progress-row"><span>Route C</span><div class="progress-track"><span style="width:92%;background:var(--amber)"></span></div><b>92</b></div><div class="progress-row"><span>Route D</span><div class="progress-track"><span style="width:50%;background:#c78aff"></span></div><b>50</b></div></section>
 <section class="panel"><div class="panel-head"><div><h3>Transport fee summary</h3><p>Example student fee records</p></div><button class="text-btn" data-go="fees">View records ↗</button></div><div class="stat-num" style="font-size:26px">₹ 21.6L</div><div class="stat-foot">Sample pending amount · illustrative only</div><div class="progress-track" style="margin-top:14px;height:9px"><span style="width:86.4%"></span></div><div class="bus-bottom" style="font-size:10px;margin-top:8px"><span>Collected ₹1.73Cr</span><span>Pending 13.6%</span></div></section></div>
 </section>
-<section class="page-view" id="page-tracking"><div class="panel simple-panel"><div class="panel-head"><div><h3>Live tracking</h3><p>Fleet positions and occupancy — prototype view</p></div><span class="tag">Demo data</span></div><div class="map google-map" id="fleetMapTracking" style="height:360px" aria-label="Google live bus tracking map"><div class="map-placeholder"><strong>Waiting for map setup</strong><span>Add a Google Maps API key, then connect bus GPS coordinates to show real positions.</span></div></div><div class="bus-list" style="margin-top:14px"><div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Bus 01 · Route A</strong><small>Demo passenger count: 36 / 50</small></div><span class="status live">DEMO</span></div><div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Bus 04 · Route C</strong><small>Demo passenger count: 46 / 50</small></div><span class="status delay">REVIEW</span></div></div></div></section>
+<section class="page-view" id="page-tracking"><div class="panel simple-panel"><div class="panel-head"><div><h3>Live tracking</h3><p>Fleet positions and occupancy — prototype view</p></div><span class="tag">Demo data</span></div><div class="map google-map" id="fleetMapTracking" style="height:360px" aria-label="OpenStreetMap showing five illustrative CMR campus bus locations"><div class="map-placeholder"><strong>Loading Telangana map…</strong><span>Hyderabad and CMR campus area · illustrative demo positions, not live GPS.</span></div></div><div class="bus-list" style="margin-top:14px"><div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>CMR-01 · Medchal Road</strong><small>Kandlakoya campus · Demo passengers: 36 / 50</small></div><span class="status live">DEMO</span></div><div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>CMR-02 · Secunderabad</strong><small>Secunderabad station · Demo passengers: 28 / 50</small></div><span class="status live">DEMO</span></div><div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>CMR-03 · Suchitra Junction</strong><small>Suchitra Junction · Demo passengers: 31 / 50</small></div><span class="status live">DEMO</span></div><div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>CMR-04 · Kompally</strong><small>Kompally · Demo passengers: 46 / 50</small></div><span class="status delay">REVIEW</span></div><div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>CMR-05 · Alwal</strong><small>Alwal · Demo passengers: 24 / 50</small></div><span class="status live">DEMO</span></div></div></div></section>
 <section class="page-view" id="page-routes"><div class="panel"><div class="panel-head"><div><h3>Routes & stops</h3><p>Sample routes for a 10-route deployment plan</p></div><button class="text-btn" id="routeExport">Export CSV ↓</button></div><div class="table-wrap"><table id="routesTable"><thead><tr><th>ROUTE</th><th>BUS</th><th>STOPS</th><th>PASSENGERS</th><th>OCCUPANCY</th><th>STATUS</th></tr></thead><tbody><tr><td>Route A · North</td><td>Bus 01</td><td>8</td><td>78</td><td>72%</td><td>On time</td></tr><tr><td>Route B · City Center</td><td>Bus 07</td><td>6</td><td>64</td><td>48%</td><td>On time</td></tr><tr><td>Route C · Lake View</td><td>Bus 04</td><td>9</td><td>92</td><td>92%</td><td>High occupancy</td></tr><tr><td>Route D · South</td><td>Bus 09</td><td>7</td><td>50</td><td>61%</td><td>On time</td></tr></tbody></table></div></div></section>
 <section class="page-view" id="page-passengers"><div class="panel"><div class="panel-head"><div><h3>Passenger insights</h3><p>Stop-wise boarding and occupancy are planned for sensor integration.</p></div><span class="tag">Prototype</span></div><div class="feature-grid"><div class="feature"><span>♙</span><h4>Onboard count</h4><p>Display passengers per bus from IR/ToF sensor readings.</p></div><div class="feature"><span>⇅</span><h4>Stop activity</h4><p>Track boardings and exits at each stop after device integration.</p></div><div class="feature"><span>⚠</span><h4>Overcrowding</h4><p>Flag occupancy thresholds to help staff review bus allocation.</p></div></div><p class="note">Counts shown on Overview are sample values for UI demonstration, not readings from real sensors.</p></div></section>
 <section class="page-view" id="page-fees"><div class="panel"><div class="panel-head"><div><h3>Transport fee status</h3><p>Search example student records</p></div><input class="search" id="feeSearch" placeholder="Search student or ID…" aria-label="Search fee records"></div><div class="table-wrap"><table id="feesTable"><thead><tr><th>STUDENT ID</th><th>STUDENT</th><th>ROUTE</th><th>AMOUNT</th><th>STATUS</th></tr></thead><tbody><tr><td>STU-1024</td><td>Sample Student A</td><td>Route A</td><td>₹18,000</td><td><span class="fee-pill paid">PAID</span></td></tr><tr><td>STU-1058</td><td>Sample Student B</td><td>Route C</td><td>₹18,000</td><td><span class="fee-pill pending">PENDING</span></td></tr><tr><td>STU-1091</td><td>Sample Student C</td><td>Route B</td><td>₹16,500</td><td><span class="fee-pill paid">PAID</span></td></tr><tr><td>STU-1136</td><td>Sample Student D</td><td>Route D</td><td>₹17,500</td><td><span class="fee-pill pending">PENDING</span></td></tr></tbody></table></div><p class="note">All names and fee values here are fictional demonstration data. No real student records or payments are connected.</p></div></section>
@@ -146,18 +146,41 @@ const routeIqMarkers=new Map();
 let busLocationChannel=null;
 const BUS_STALE_AFTER_MS=120000;
 function showMapNotice(id,title,message){const el=document.getElementById(id);if(el)el.innerHTML='<div class="map-placeholder"><strong>'+title+'</strong><span>'+message+'</span></div>';}
+const ROUTEIQ_DEMO_BUSES=[
+  {id:"CMR-01",route:"Medchal Road",lat:17.6068,lng:78.4812,passengers:36,capacity:50,stop:"Kandlakoya campus"},
+  {id:"CMR-02",route:"Secunderabad",lat:17.4399,lng:78.4983,passengers:28,capacity:50,stop:"Secunderabad station"},
+  {id:"CMR-03",route:"Suchitra Junction",lat:17.5005,lng:78.4782,passengers:31,capacity:50,stop:"Suchitra Junction"},
+  {id:"CMR-04",route:"Kompally",lat:17.5380,lng:78.4867,passengers:46,capacity:50,stop:"Kompally"},
+  {id:"CMR-05",route:"Alwal",lat:17.5045,lng:78.5150,passengers:24,capacity:50,stop:"Alwal"}
+];
+function addDemoBusMarkers(map){
+  if(map._routeIqDemoAdded)return;
+  map._routeIqDemoAdded=true;
+  const bounds=[];
+  ROUTEIQ_DEMO_BUSES.forEach((bus,index)=>{
+    const point=[bus.lat,bus.lng];bounds.push(point);
+    const marker=L.marker(point).addTo(map);
+    marker.bindPopup("<strong>"+bus.id+" · "+bus.route+"</strong><br>"+bus.stop+"<br>Demo occupancy: "+bus.passengers+"/"+bus.capacity+" seats<br><em>Illustrative location — not live GPS</em>");
+  });
+  const routePoints=ROUTEIQ_DEMO_BUSES.map(bus=>[bus.lat,bus.lng]);
+  L.polyline(routePoints,{color:"#d6a600",weight:4,opacity:.8,dashArray:"8 7"}).addTo(map);
+  map.fitBounds(bounds,{padding:[28,28],maxZoom:11});
+  L.control.scale({imperial:false}).addTo(map);
+}
 function initRouteIqGoogleMaps(){
   routeIqGoogleMapLoaded=true;
-  [{id:"fleetMapOverview",zoom:5},{id:"fleetMapTracking",zoom:5}].forEach(item=>{
+  [{id:"fleetMapOverview",zoom:10},{id:"fleetMapTracking",zoom:10}].forEach(item=>{
     const el=document.getElementById(item.id);if(!el||el.dataset.mapReady==="true")return;
-    const map=L.map(el).setView([20.5937,78.9629],item.zoom);
+    const placeholder=el.querySelector(".map-placeholder");if(placeholder)placeholder.remove();
+    const map=L.map(el).setView([17.52,78.49],item.zoom);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
       maxZoom:19,
       attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>'
     }).addTo(map);
+    addDemoBusMarkers(map);
     el.dataset.mapReady="true";
     el.routeIqMap=map;
-    setTimeout(()=>map.invalidateSize(),100);
+    setTimeout(()=>map.invalidateSize(),150);
   });
   if(window.routeIqUser)loadLatestBusLocations();
 }
