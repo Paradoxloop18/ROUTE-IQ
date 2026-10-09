@@ -80,27 +80,30 @@ body.auth-open .map{visibility:hidden!important;pointer-events:none!important}
 <section class="page-view active" id="page-dashboard">
 <div class="welcome"><div><h2>Good evening, Transport Admin 👋</h2><p>Here’s your campus transport snapshot. Keep every journey moving safely.</p></div><div class="welcome-mark">🚌</div></div>
 <div class="stats">
-<div class="stat"><div class="stat-head">Active buses <span class="stat-icon">🚌</span></div><div class="stat-num">08 <small style="font-size:12px;color:var(--muted)">/ 10</small></div><div class="stat-foot"><span class="good">● 8 on route</span> · 2 parked</div></div>
-<div class="stat"><div class="stat-head">Students onboard <span class="stat-icon">♙</span></div><div class="stat-num">284</div><div class="stat-foot"><span class="good">↗ 12%</span> vs. typical trip</div></div>
-<div class="stat"><div class="stat-head">Fees collected <span class="stat-icon">₹</span></div><div class="stat-num">86.4%</div><div class="stat-foot"><span class="good">864 of 1,000</span> student records</div></div>
-<div class="stat"><div class="stat-head">Active alerts <span class="stat-icon">⚑</span></div><div class="stat-num">03</div><div class="stat-foot"><span class="amber">2 delays</span> · 1 route notice</div></div>
+<div class="stat"><div class="stat-head">Configured routes <span class="stat-icon">⇄</span></div><div class="stat-num">05</div><div class="stat-foot">Route 03, 13, 16, 19A, 25</div></div>
+<div class="stat"><div class="stat-head">Configured stops <span class="stat-icon">⌖</span></div><div class="stat-num">39</div><div class="stat-foot">Includes 5 CMRGI arrivals</div></div>
+<div class="stat"><div class="stat-head">Student records <span class="stat-icon">♙</span></div><div class="stat-num">44</div><div class="stat-foot">Reference/demo records in Supabase</div></div>
+<div class="stat"><div class="stat-head">Fee status <span class="stat-icon">₹</span></div><div class="stat-num">1 paid</div><div class="stat-foot">43 marked pending · demo only</div></div>
 </div>
 <div class="layout">
 <section class="panel"><div class="panel-head"><div><h3>Live fleet overview</h3><p>Illustrative route map · demo locations</p></div><button class="text-btn" data-go="tracking">View tracking ↗</button></div>
 <div class="map google-map" id="fleetMapOverview" aria-label="OpenStreetMap showing five illustrative CMR campus bus locations"><div class="map-placeholder"><strong>Loading Telangana map…</strong><span>Map of Hyderabad and CMR campus area. Bus positions are illustrative demo data, not live GPS.</span></div></div><p class="note">Prototype preview only — GPS, arrival times and passenger counts are not connected to a live device or backend.</p>
 </section>
 <section class="panel"><div class="panel-head"><div><h3>Fleet status</h3><p>Bus occupancy at a glance</p></div><button class="text-btn" data-go="tracking">All buses ↗</button></div><div class="bus-list">
-<div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Bus 01 · TS 09 AB 1234</strong><small>Route A · North Campus</small><div class="occupancy"><span style="width:72%"></span></div><div class="bus-bottom"><span>36 / 50 seats</span><span>72%</span></div></div><span class="status live">ON ROUTE</span></div>
-<div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Bus 04 · TS 09 CD 5678</strong><small>Route C · Lake View</small><div class="occupancy"><span style="width:92%;background:var(--amber)"></span></div><div class="bus-bottom"><span>46 / 50 seats</span><span>92%</span></div></div><span class="status delay">BUSY</span></div>
-<div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Bus 07 · TS 09 EF 9012</strong><small>Route B · City Center</small><div class="occupancy"><span style="width:48%"></span></div><div class="bus-bottom"><span>24 / 50 seats</span><span>48%</span></div></div><span class="status live">ON ROUTE</span></div>
+<div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Route 03 · TS-08-UB-4503</strong><small>Radhika · Incharge: ES Babu</small><div class="bus-bottom"><span>7 configured stops</span><span>Demo</span></div></div><span class="status live">REFERENCE</span></div>
+<div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Route 13 · TS-08-UB-4513</strong><small>Dilsuknagar Saibaba Temple · Incharge: P. Mahesh Babu</small><div class="bus-bottom"><span>10 configured stops</span><span>Demo</span></div></div><span class="status live">REFERENCE</span></div>
+<div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Route 16 · TS-08-UB-4516</strong><small>Ramanthapur · Incharge: M. Naresh Kumar</small><div class="bus-bottom"><span>10 configured stops</span><span>Demo</span></div></div><span class="status live">REFERENCE</span></div>
+<div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Route 19A · TS-08-UB-4519</strong><small>Sathyam Theatre · Incharge: Laxman Reddy</small><div class="bus-bottom"><span>6 configured stops</span><span>Demo</span></div></div><span class="status live">REFERENCE</span></div>
+<div class="bus"><div class="bus-symbol">🚌</div><div class="bus-info"><strong>Route 25 · TS-08-UB-4525</strong><small>Usha Mullapudi Arch · Incharge: Dr Bhaskar</small><div class="bus-bottom"><span>6 configured stops</span><span>Demo</span></div></div><span class="status live">REFERENCE</span></div>
 </div></section>
 </div>
 <div class="layout">
-<section class="panel"><div class="panel-head"><div><h3>Route performance</h3><p>Sample occupancy and schedule status</p></div><button class="text-btn" data-go="routes">Manage routes ↗</button></div><div class="table-wrap"><table><thead><tr><th>ROUTE</th><th>STOPS</th><th>PASSENGERS</th><th>OCCUPANCY</th><th>STATUS</th></tr></thead><tbody>
-<tr><td><div class="route-name"><span class="route-dot"></span>Route A · North</div></td><td>08</td><td>78</td><td>72%</td><td><span class="status live">ON TIME</span></td></tr>
-<tr><td><div class="route-name"><span class="route-dot" style="background:var(--blue)"></span>Route B · City</div></td><td>06</td><td>64</td><td>48%</td><td><span class="status live">ON TIME</span></td></tr>
-<tr><td><div class="route-name"><span class="route-dot" style="background:var(--amber)"></span>Route C · Lake</div></td><td>09</td><td>92</td><td>92%</td><td><span class="status delay">CROWDED</span></td></tr>
-<tr><td><div class="route-name"><span class="route-dot" style="background:#c78aff"></span>Route D · South</div></td><td>07</td><td>50</td><td>61%</td><td><span class="status live">ON TIME</span></td></tr>
+<section class="panel"><div class="panel-head"><div><h3>Route performance</h3><p>Sample occupancy and schedule status</p></div><button class="text-btn" data-go="routes">Manage routes ↗</button></div><div class="table-wrap"><table><thead><tr><th>ROUTE</th><th>BUS PLATE</th><th>STOPS</th><th>FIRST STOP</th><th>DEPARTURE</th><th>CMRGI ARRIVAL</th></tr></thead><tbody>
+<tr><td><div class="route-name"><span class="route-dot"></span>Route 03 · Radhika</div></td><td>TS-08-UB-4503</td><td>7</td><td>Radhika</td><td>07:30 AM</td><td>08:50 AM</td></tr>
+<tr><td><div class="route-name"><span class="route-dot"></span>Route 13 · Dilsuknagar</div></td><td>TS-08-UB-4513</td><td>10</td><td>Dilsuknagar Saibaba Temple</td><td>07:15 AM</td><td>08:50 AM</td></tr>
+<tr><td><div class="route-name"><span class="route-dot"></span>Route 16 · Ramanthapur</div></td><td>TS-08-UB-4516</td><td>10</td><td>Ramanthapur</td><td>07:20 AM</td><td>08:50 AM</td></tr>
+<tr><td><div class="route-name"><span class="route-dot"></span>Route 19A · Sathyam Theatre</div></td><td>TS-08-UB-4519</td><td>6</td><td>Sathyam Theatre</td><td>07:40 AM</td><td>08:50 AM</td></tr>
+<tr><td><div class="route-name"><span class="route-dot"></span>Route 25 · Usha Mullapudi Arch</div></td><td>TS-08-UB-4525</td><td>6</td><td>Usha Mullapudi Arch</td><td>07:30 AM</td><td>08:50 AM</td></tr>
 </tbody></table></div></section>
 <section class="panel"><div class="panel-head"><div><h3>Safety & service alerts</h3><p>Items that may need attention</p></div><button class="text-btn" data-go="alerts">View all ↗</button></div><div class="alert-list">
 <div class="alert"><div class="alert-icon">◷</div><div><strong>Route C · Delay reported</strong><p>Sample notice: traffic near Lake View stop.</p><time>12 min ago · Demo alert</time></div></div>
@@ -165,11 +168,11 @@ let busLocationChannel=null;
 const BUS_STALE_AFTER_MS=120000;
 function showMapNotice(id,title,message){const el=document.getElementById(id);if(el)el.innerHTML='<div class="map-placeholder"><strong>'+title+'</strong><span>'+message+'</span></div>';}
 const ROUTEIQ_DEMO_BUSES=[
-  {id:"CMR-01",route:"Medchal Road",lat:17.6068,lng:78.4812,passengers:36,capacity:50,stop:"Kandlakoya campus"},
-  {id:"CMR-02",route:"Secunderabad",lat:17.4399,lng:78.4983,passengers:28,capacity:50,stop:"Secunderabad station"},
-  {id:"CMR-03",route:"Suchitra Junction",lat:17.5005,lng:78.4782,passengers:31,capacity:50,stop:"Suchitra Junction"},
-  {id:"CMR-04",route:"Kompally",lat:17.5380,lng:78.4867,passengers:46,capacity:50,stop:"Kompally"},
-  {id:"CMR-05",route:"Alwal",lat:17.5045,lng:78.5150,passengers:24,capacity:50,stop:"Alwal"}
+  {id:"Route 03",plate:"TS-08-UB-4503",route:"Radhika → CMRGI",lat:17.4764,lng:78.5583,stop:"Radhika",time:"07:30 AM IST"},
+  {id:"Route 13",plate:"TS-08-UB-4513",route:"Dilsuknagar Saibaba Temple → CMRGI",lat:17.3688,lng:78.5247,stop:"Dilsuknagar Saibaba Temple",time:"07:15 AM IST"},
+  {id:"Route 16",plate:"TS-08-UB-4516",route:"Ramanthapur → CMRGI",lat:17.3980,lng:78.5370,stop:"Ramanthapur",time:"07:20 AM IST"},
+  {id:"Route 19A",plate:"TS-08-UB-4519",route:"Sathyam Theatre → CMRGI",lat:17.4370,lng:78.4480,stop:"Sathyam Theatre",time:"07:40 AM IST"},
+  {id:"Route 25",plate:"TS-08-UB-4525",route:"Usha Mullapudi Arch → CMRGI",lat:17.4930,lng:78.3990,stop:"Usha Mullapudi Arch",time:"07:30 AM IST"}
 ];
 function addDemoBusMarkers(map){
   if(map._routeIqDemoAdded)return;
@@ -178,7 +181,7 @@ function addDemoBusMarkers(map){
   ROUTEIQ_DEMO_BUSES.forEach((bus,index)=>{
     const point=[bus.lat,bus.lng];bounds.push(point);
     const marker=L.marker(point).addTo(map);
-    marker.bindPopup("<strong>"+bus.id+" · "+bus.route+"</strong><br>"+bus.stop+"<br>Demo occupancy: "+bus.passengers+"/"+bus.capacity+" seats<br><em>Illustrative location — not live GPS</em>");
+    marker.bindPopup("<strong>"+bus.id+" · "+bus.plate+"</strong><br>"+bus.route+"<br>First stop: "+bus.stop+"<br>Scheduled: "+bus.time+"<br><em>Illustrative stop coordinate — not live GPS</em>");
   });
   const routePoints=ROUTEIQ_DEMO_BUSES.map(bus=>[bus.lat,bus.lng]);
   L.polyline(routePoints,{color:"#d6a600",weight:4,opacity:.8,dashArray:"8 7"}).addTo(map);
