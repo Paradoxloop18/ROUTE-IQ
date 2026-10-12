@@ -57,6 +57,31 @@ body.auth-open .map{visibility:hidden!important;pointer-events:none!important}
 .route-summary{margin-top:16px}.route-filters{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 14px}.route-filters .search{width:auto;min-width:175px;max-width:100%}
 #routesTable{min-width:1120px}#studentTable{min-width:1060px}
 .data-status{font-size:15px!important}.demo-record{display:inline-block;border-radius:20px;padding:4px 7px;font-size:9px;font-weight:800;background:#fff0b8;color:#765500;white-space:nowrap}
+
+/* ROUTEIQ reference-dashboard polish: midnight navy, blue actions, readable tables */
+:root{--bg:#0b1220;--panel:#111c2e;--panel2:#162338;--line:#26354b;--text:#edf4ff;--muted:#8fa1ba;--green:#52e0a0;--blue:#3977f6;--amber:#ffc86b;--red:#ff7f87;--radius:16px}
+body{background:var(--bg);color:var(--text)}
+.sidebar{background:#080f1c;border-color:#1d2a3d}
+.logo{background:linear-gradient(145deg,#ffdb35,#f6a900);color:#142039;border:1px solid #f7cf3e;border-radius:50%;box-shadow:0 0 0 3px #f6bd2520}
+.brand-name{color:#eaf2ff;letter-spacing:.2px}.brand-sub{color:#65a9ff;letter-spacing:.5px}
+.nav-label{color:#7587a1}.nav button{color:#a8b7cd}.nav button.active,.nav button:hover{background:#172742;color:#fff}.nav button.active{box-shadow:inset 3px 0 #3977f6}
+.side-bottom{background:#101d2d;border-color:#26364a}.tag{background:#153b34;color:#52e0a0}
+.main{padding:22px clamp(14px,1.5vw,28px) 34px}.topbar{margin-bottom:20px}.eyebrow{color:#66a8ff}.topbar h1{font-size:clamp(22px,2.3vw,29px)}
+.welcome{background:linear-gradient(110deg,#2147a0,#17356b 72%);border-color:#315bc0;box-shadow:0 10px 30px #102b7028}.welcome p{color:#d4e2ff}.welcome-mark{color:#fff}
+.stat,.panel{background:var(--panel);border-color:var(--line);box-shadow:none}.stat-icon{background:#1b2e49}.stat-head{color:#91a4bf}.stat-num{color:#f4f7ff}.stat-foot{color:#91a4bf}
+.good{color:#52e0a0}.amber{color:#ffc86b}.bus{background:#142236;border-color:#26384f}.bus-symbol{background:#20364e}.occupancy{background:#29384b}.occupancy span{background:#3977f6}
+.status.live{background:#153b34;color:#52e0a0}.status.delay{background:#413522;color:#ffc86b}
+.map{background-color:#142437;background-image:linear-gradient(27deg,transparent 46%,#22364c 47%,#22364c 49%,transparent 50%),linear-gradient(115deg,transparent 44%,#1b3043 45%,#1b3043 47%,transparent 48%),linear-gradient(90deg,transparent 48%,#20364a 49%,#20364a 50%,transparent 51%),linear-gradient(0deg,transparent 48%,#20364a 49%,#20364a 50%,transparent 51%)}
+.map:before{background:#183b3c;border-color:#2a6660}.map:after{background:#18343a;border-color:#285b5c}.route-line{background:#3977f6;box-shadow:0 0 12px #3977f655}.pin{border-color:#b7d0ff;background:#2455b7;color:#fff}.map-card,.map-legend{background:#0c1724ed;border-color:#34495b;color:#edf4ff}.map-label{color:#91a8bf}.road-label{color:#78a9a0}
+.alert-icon{background:#44331e;color:#ffc86b}.alert-icon.red{background:#45282e;color:#ff7f87}.alert strong{color:#f1f5fb}
+.feature{background:#142236;border-color:#26364b}.progress-track{background:#26364a}.progress-track span{background:#3977f6}
+.search{background:#0c1725;border-color:#2a3a50;color:#edf4ff}.text-btn{color:#6ea8ff}
+.date-chip,.icon-btn{background:#111c2e;border-color:#26354b;color:#edf4ff}.avatar{background:#294b9b;color:#fff}
+td{border-color:#1f2e41}th{color:#8fa1ba}.fee-pill.paid{background:#153b34;color:#52e0a0}.fee-pill.pending{background:#45351e;color:#ffc86b}
+.page-view .panel-head h3{color:#f1f5fb}.note{color:#8fa1ba}.toast{background:#183c34;color:#d8ffed;border-color:#2b6b59}
+.auth-card{background:#111c2e;color:#edf4ff;border-color:#26354b}.auth-card h2,.auth-brand strong{color:#edf4ff}.auth-sub,.auth-brand small,.auth-foot{color:#8fa1ba}.auth-form label{color:#c4d0e1}.auth-form input{background:#1d2b40;border-color:#34445a;color:#edf4ff}.auth-tabs{background:#1a2a40}.auth-tabs button.active{background:#3977f6;color:#fff}.primary-btn{background:#2860e8;color:#fff;box-shadow:none}.primary-btn:hover{background:#1e51ce}.assistant-fab{background:#2860e8;color:#fff}.assistant-panel{background:#111c2e;border-color:#26354b}.assistant-head{background:#172742;color:#edf4ff}.assistant-head small{color:#9db0ca}.assistant-close{color:#edf4ff}.assistant-messages{background:#0d1727}.chat-msg.bot{background:#1c3049;color:#edf4ff}.chat-msg.user{background:#2860e8;color:#fff}.assistant-prompts button{background:#172742;border-color:#34445a;color:#cbd9ee}.assistant-input{border-color:#26354b}.assistant-input input{background:#0c1725;border-color:#34445a;color:#edf4ff}.logout-btn{background:#111c2e;border-color:#26354b;color:#edf4ff}
+@media(max-width:720px){.sidebar{display:flex;flex-direction:row;overflow:auto;padding:10px;gap:8px}.sidebar>.brand{flex-shrink:0}.sidebar>div:not(.brand){display:none}.sidebar .nav{display:flex}.sidebar .nav button{white-space:nowrap;padding:9px}.main{padding-top:14px}}
+
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 </head>
